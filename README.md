@@ -30,15 +30,14 @@ to multiply experiment 14 and 68 with factors of 1.6 and 20.38 respectively.
 ## 'installation'
 
 There is no real installation required except adding the directory these scripts are located in to your path and making the scripts executable. Adding the directory to your allows your operating system to find the scripts so that you can execute them in any directory you want.
-On linux or osx you can do this as follows: If you are using bash as your shell language, you can do that by adding this line to your .bashrc file (in your home folder):
+On linux or osx you can do this as follows: If you are using bash as your shell language, you can do it by adding this line to your .bashrc file (in your home folder):
 
 ```bash
 
 export PATH="/path/to/nmrblocks:$PATH"
 
 ```
-or if you are using csh this line to your .cshrc file
-(also in your home folder):
+or if you are using csh, add this line to your .cshrc file (also in your home folder):
 
 ```csh
 
@@ -52,6 +51,8 @@ type:
 echo $SHELL
 
 in your terminal.
+
+Notice that in order to make these changes become active you have to (re-)initialize your shell. The easiest way to do this is by just opening a new one.
 
 To make for instance the add_blocks.py script executable, navigate in the terminal to the directory these scripts are located in and type:
 
