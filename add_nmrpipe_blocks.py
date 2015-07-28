@@ -62,7 +62,7 @@ If not, see http://www.gnu.org/licenses/.
 from subprocess import call
 from os import makedirs, listdir
 from shutil import rmtree
-from os.path import exists, abspath, join, split
+from os.path import exists, abspath, join, split, exists
 import sys
 import re
 from parse_arguments import parse_arguments
@@ -104,19 +104,37 @@ def add_fids(exp_dirs, scaling_factors, target_dir):
     '''
 
     # making temporary directories
-    temp_dir_names = ['temp' + str(i) for i in range(len(exp_dirs)-2)] + ['fid']
+    temp_dir_names = ['temp' + str(i) for i in range(len(exp_dirs)-2)]
+
+    # this is the directory the fids reside in
+    pattern = None
+    fid_dirs = None
+    for filename in listdir(exp_dirs[0]):
+        if filename.endswith('.fid'):
+            fid_dirs = [abspath(exp_dir) for exp_dir in exp_dirs]
+            pattern = filename
+            temp_dir_names.append(None)
+            break
+    else:
+        fid_dirs = [join(abspath(exp_dir), 'fid') for exp_dir in exp_dirs]
+        pattern = file_pattern_from_dir(fid_dirs[0])
+        temp_dir_names.append('fid')
+
+    if not pattern or not fid_dirs:
+        raise IOError('Could not find a .fid file or fid directory in experiment directories.')
+
     temp_dirs = []
     for name in temp_dir_names:
-        full_path = join(target_dir, name)
-        if not exists(full_path):
-            makedirs(full_path)
+        if not name:
+            full_path = target_dir
+        else:
+            full_path = join(target_dir, name)
+            if not exists(full_path):
+                makedirs(full_path)
         temp_dirs.append(full_path)
 
-    # this is the directory the fids recide in
-    fid_dirs = [join(abspath(exp_dir), 'fid') for exp_dir in exp_dirs]
     in1 = fid_dirs[0]
     c1 = scaling_factors[0]
-    pattern = file_pattern_from_dir(in1)
     com = 'addNMR -in1 {in1}/{pattern} -in2 {in2}/{pattern} -out {out}/{pattern} -c1 {c1} -c2 {c2} -verb'
 
     for fid_dir, scaling_factor, temp_dir in zip(fid_dirs[1:], scaling_factors[1:], temp_dirs):
